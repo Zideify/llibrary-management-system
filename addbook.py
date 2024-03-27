@@ -5,7 +5,7 @@ con = sqlite3.connect('library.db')
 cur=con.cursor()
 
 class AddBook(Toplevel):
-  def __init__(self):  # inherits from the Toplevel widget class - to make seperate window
+  def __init__(self):  # inherits from the Toplevel widget class - to create seperate window
     Toplevel.__init__(self)
     self.geometry("650x750+550+200") # sets the window dimensions
     self.title("Add Book") # set the window title text 
