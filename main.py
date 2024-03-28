@@ -17,12 +17,12 @@ class Main(object): # class to represent main window
       taken_books = cur.execute("SELECT count(book_status) FROM books WHERE book_status=1").fetchall() # amount of books taken out
       print(count_books)
       # updaing each label with the corresponding information and respective text before and after
-      self.lbl_book_count.config(text="Total: " + str(count_books[0][0]) + ' books in library')
-      self.lbl_member_count.config(text="Total members: " + str(count_members[0][0]))
-      self.lbl_taken_count.config(text="Taken books: " + str(taken_books[0][0]))
+      self.lbl_book_count.config(text="Total: " + str(count_books[0][0]) + ' books in library') # counts amount of books in library
+      self.lbl_member_count.config(text="Total members: " + str(count_members[0][0])) # amount of members in library
+      self.lbl_taken_count.config(text="Taken books: " + str(taken_books[0][0])) # amount of borrowed books
       displayBooks(self) # refreshing the list
-      displayMembers(self)
-      borrowedBooks(self)
+      displayMembers(self) # refreshing the list
+      borrowedBooks(self) # refreshing the list
 
     def displayBooks(self):
       books=cur.execute("Select * FROM books").fetchall() # executes query to select all book records
@@ -42,20 +42,20 @@ class Main(object): # class to represent main window
         print(book_info)
         self.list_Details.delete(0, 'end') # clears details currently in Listbox
       # fills Listbox with the book details
-        self.list_Details.insert(0, "Book Name: " + book_info[0][1])
-        self.list_Details.insert(1, "Author: " + book_info[0][2])
-        self.list_Details.insert(2, "Page: " + book_info[0][3])
-        self.list_Details.insert(3, "Language: " + book_info[0][4])
+        self.list_Details.insert(0, "Book Name: " + book_info[0][1]) # book name
+        self.list_Details.insert(1, "Author: " + book_info[0][2]) # book author  
+        self.list_Details.insert(2, "Page: " + book_info[0][3]) # book pages
+        self.list_Details.insert(3, "Language: " + book_info[0][4]) # book lang
         if book_info[0][5] == 0: # checks if book is available or not
           self.list_Details.insert(4, "Status : Available")
         else:
           self.list_Details.insert(4, "Status : Not Available")
 
       def doubleClick(evt):
-        global given_id        
-        value = str(self.list_books.get(self.list_books.curselection())) 
-        given_id = value.split('-')[0]
-        give_book=GiveBook()
+        global given_id # global variable to store selected books ID
+        value = str(self.list_books.get(self.list_books.curselection())) # getting selected book's info
+        given_id = value.split('-')[0] # getting ID from selected book 
+        give_book=GiveBook() # creating an instance of the give_book class
 
       self.list_books.bind('<<ListboxSelect>>', bookInfo) # bind event to refresh details on selection 
       self.tabs.bind('<<NotebookTabChanged>>', displayStatistics)
@@ -123,19 +123,19 @@ class Main(object): # class to represent main window
     self.btngive.pack(side=LEFT) #places button and specifys location
 
   # return book
-    self.iconreturn = PhotoImage(file='icons/book_return.png')
-    self.btnreturn = Button(topFrame, text='Return Book', image=self.iconreturn, compound=LEFT, font='arial 12 bold', command=self.returnbook)
-    self.btnreturn.pack(side=LEFT, padx=5)  
+    self.iconreturn = PhotoImage(file='icons/book_return.png') # load image to use as icon
+    self.btnreturn = Button(topFrame, text='Return Book', image=self.iconreturn, compound=LEFT, font='arial 12 bold', command=self.returnbook) # creates the actual button
+    self.btnreturn.pack(side=LEFT, padx=5)  #places button and specifys location
 
   # delete book 
-    self.icondelete = PhotoImage(file='icons/book_remove.png')
-    self.btndelete = Button(topFrame, text='Delete Book', image=self.icondelete, compound=LEFT, font='arial 12 bold', command=self.deletebook) 
-    self.btndelete.pack(side=LEFT, padx=5)  
+    self.icondelete = PhotoImage(file='icons/book_remove.png') # load image to use as icon
+    self.btndelete = Button(topFrame, text='Delete Book', image=self.icondelete, compound=LEFT, font='arial 12 bold', command=self.deletebook) # creates the actual button
+    self.btndelete.pack(side=LEFT, padx=5)  #places button and specifys location
 
   # delete member
-    self.icondeletemem = PhotoImage(file='icons/delete_member.png')
-    self.btndeletemem = Button(topFrame, text='Delete Member', image=self.icondeletemem, compound=LEFT, font='arial 12 bold', command=self.deletemember) 
-    self.btndeletemem.pack(side=LEFT, padx=5)   
+    self.icondeletemem = PhotoImage(file='icons/delete_member.png') # load image to use as icon
+    self.btndeletemem = Button(topFrame, text='Delete Member', image=self.icondeletemem, compound=LEFT, font='arial 12 bold', command=self.deletemember)  # creates the actual button
+    self.btndeletemem.pack(side=LEFT, padx=5) #places button and specifys location
 
 
     
@@ -162,35 +162,37 @@ class Main(object): # class to represent main window
     self.tab3 = ttk.Frame(self.tabs)    
     self.tabs.add(self.tab3, text='Member Info', image=self.tab3_icon, compound=LEFT)
 
-    self.member_tree = ttk.Treeview(self.tab3, columns=('ID', 'Name', 'Phone', 'Email'), show='headings')
+    self.member_tree = ttk.Treeview(self.tab3, columns=('ID', 'Name', 'Phone', 'Email'), show='headings') # treeview widget to display member information
+    # column headings for treeview widget
     self.member_tree.heading('ID', text='Member ID')
     self.member_tree.heading('Name', text='Name')
     self.member_tree.heading('Phone', text='Phone')
     self.member_tree.heading('Email', text='Email')
-    self.member_tree.pack(fill=BOTH, expand=True)
+    self.member_tree.pack(fill=BOTH, expand=True) # displaying the widget
 
-    def displayMembers(self):
-      self.member_tree.delete(*self.member_tree.get_children())
-      members = cur.execute("SELECT * FROM members").fetchall()
+    def displayMembers(self): # function that will display the members of the library
+      self.member_tree.delete(*self.member_tree.get_children()) # clearing exisitng members - to prevent repetition
+      members = cur.execute("SELECT * FROM members").fetchall() # fetching all members from the database
       for member in members:
-        self.member_tree.insert('', END, values=member)
+        self.member_tree.insert('', END, values=member) # inserting each member into the member treeview widget
 
     self.tab4_icon=PhotoImage(file='icons/book_borrowed.png') # loads an image for the fourth tab
     self.tab4 = ttk.Frame(self.tabs)    
-    self.tabs.add(self.tab4, text='Books Borrowed', image=self.tab4_icon, compound=LEFT)        
+    self.tabs.add(self.tab4, text='Books Borrowed', image=self.tab4_icon, compound=LEFT) 
 
-    self.borrowed_tree = ttk.Treeview(self.tab4, columns=('book', 'member'), show='headings')
+    self.borrowed_tree = ttk.Treeview(self.tab4, columns=('book', 'member'), show='headings') # treeview widget to display borrowed books
+  # column headings for treeview widget
     self.borrowed_tree.heading('book', text='Book')
     self.borrowed_tree.heading('member', text='Member')
     self.borrowed_tree.column('book', width=300)
     self.borrowed_tree.column('member', width=300)
-    self.borrowed_tree.pack(side=LEFT, fill=BOTH, expand=True)
+    self.borrowed_tree.pack(side=LEFT, fill=BOTH, expand=True) # displaying the widget
 
-    def borrowedBooks(self):
-      borrowed_books = cur.execute("SELECT bbook_id, bmember_id FROM borrows").fetchall() 
-      self.borrowed_tree.delete(*self.borrowed_tree.get_children())
+    def borrowedBooks(self): # function to display borrowed books
+      borrowed_books = cur.execute("SELECT bbook_id, bmember_id FROM borrows").fetchall() #etching all records of borrowed books from the database
+      self.borrowed_tree.delete(*self.borrowed_tree.get_children()) # clearing existing data
       for book_name, member_name in borrowed_books:
-        self.borrowed_tree.insert('', END, values=( book_name, member_name))    
+        self.borrowed_tree.insert('', END, values=( book_name, member_name)) # inserting each borrowed book into the borrowed book treeview widget   
 
   #list books :
     self.list_books= Listbox(self.tab1,width=40,height=30,bd=5,font='times 12 bold') # creates Listbox to hold book lists
@@ -216,7 +218,7 @@ class Main(object): # class to represent main window
     displayStatistics(self) # calling the dispayStatistics method
     displayMembers(self) # calling the dispayMembers method
 
-  def addbook(self):
+  def addbook(self): # creating method, got from other files
     add=addbook.AddBook()
 
   def addmember(self):
