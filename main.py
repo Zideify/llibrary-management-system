@@ -279,18 +279,20 @@ class Main(object): # class to represent main window
 class GiveBook(Toplevel):
   def __init__(self):
     Toplevel.__init__(self)
-    self.geometry("650x750+550+300")
-    self.title("Lend Book")
+    self.geometry("650x750+550+300") # set dimensions of window
+    self.title("Lend Book") # title of window
     self.resizable(False, False)
 
-    global given_id
-    self.book_id=int(given_id)
+    global given_id # accessing global variable to get ID
+    self.book_id=int(given_id) # storing ID of selected book
+   # retrieving all books from the database and creating a list of book IDs and titles
     query = "SELECT * FROM books"
     books = cur.execute(query).fetchall()
     book_list = []
     for book in books:
       book_list.append(str(book[0])+ "-" + book[1])
 
+    # retrieving all members from the database and creating a list of member IDs and names
     query = "SELECT * FROM members"
     members = cur.execute(query).fetchall()
     member_list = []
@@ -315,43 +317,43 @@ class GiveBook(Toplevel):
 #Entries and Lables
     
   #Book Name
-    self.book_name = StringVar()
-    self.lbl_name=Label(self.bottomFrame, text='Book:', font = 'arial 15 bold', fg = 'white', bg = '#fcc324') 
-    self.lbl_name.place(x=40,y=40)
-    self.combo_name = ttk.Combobox(self.bottomFrame, textvariable = self.book_name)
-    self.combo_name['values']=book_list
-    self.combo_name.current(self.book_id-1)
-    self.combo_name.place(x=150, y=45)
+    self.book_name = StringVar() # variable to store the selected book name
+    self.lbl_name=Label(self.bottomFrame, text='Book:', font = 'arial 15 bold', fg = 'white', bg = '#fcc324')  # creating label
+    self.lbl_name.place(x=40,y=40) # placement for label
+    self.combo_name = ttk.Combobox(self.bottomFrame, textvariable = self.book_name) # combobox for selecting book name
+    self.combo_name['values']=book_list # assigning book names to the combobox
+    self.combo_name.current(self.book_id-1) # selecting the current book based on book_id
+    self.combo_name.place(x=150, y=45) # placement of combobox
 
   #Member Name
-    self.member_name = StringVar()    
-    self.lbl_phone=Label(self.bottomFrame, text='Member:', font = 'arial 15 bold', fg = 'white', bg = '#fcc324')
-    self.lbl_phone.place(x=40,y=80)
-    self.combo_member = ttk.Combobox(self.bottomFrame, textvariable = self.member_name)
-    self.combo_member['values']=member_list
-    self.combo_member.place(x=150, y=85) 
+    self.member_name = StringVar() # variable to store the selected member name
+    self.lbl_phone=Label(self.bottomFrame, text='Member:', font = 'arial 15 bold', fg = 'white', bg = '#fcc324') # creating label
+    self.lbl_phone.place(x=40,y=80)# placement for label
+    self.combo_member = ttk.Combobox(self.bottomFrame, textvariable = self.member_name) # combobox for selecting book name
+    self.combo_member['values']=member_list  # assigning book names to the combobox
+    self.combo_member.place(x=150, y=85) # placement of combobox
 
     #button
-    button = Button(self.bottomFrame, text = 'Lend Book', command = self.lendBook)
-    button.place(x=270, y=120)
+    button = Button(self.bottomFrame, text = 'Lend Book', command = self.lendBook) # creating button that will lend book
+    button.place(x=270, y=120) # button is placed
     
   def lendBook(self):
-    member_name = self.member_name.get()
-    book_name = self.book_name.get()    
+    member_name = self.member_name.get() # getting selected member
+    book_name = self.book_name.get() # getting selected book
 
-    if (book_name and member_name) != "":
+    if (book_name and member_name) != "": # checking of fields are not empty
       try:
-        query = "INSERT INTO 'borrows' (bbook_id, bmember_id) VALUES(?,?)"
+        query = "INSERT INTO 'borrows' (bbook_id, bmember_id) VALUES(?,?)" # inserting the borrowed book record into the 'borrows' table
         cur.execute(query, (book_name, member_name))
         con.commit()
-        messagebox.showinfo("Success", "Successfully added to database!", icon = 'info')
+        messagebox.showinfo("Success", "Successfully added to database!", icon = 'info') # showing success message and updating book status in the database
         cur.execute("UPDATE books SET book_status =? WHERE book_id=?", (1, self.book_id))
         con.commit()
       except:
-        messagebox.showerror("Error", "Cannot add to database", icon = 'warning')  
+        messagebox.showerror("Error", "Cannot add to database", icon = 'warning')  # error message in case of failure
 
     else:
-      messagebox.showerror("Error", "Fields cannot be empty", icon = 'warning')   
+      messagebox.showerror("Error", "Fields cannot be empty", icon = 'warning')   # showing error if fields are empty
 
 def main():
   root = Tk()
