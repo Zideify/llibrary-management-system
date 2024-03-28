@@ -27,7 +27,7 @@ class ReturnBook(Toplevel):
         heading.place(x=270, y=60)
 
         # Borrowed books list
-        self.member_name = StringVar()    
+        self.book_name = StringVar() # variable to store the selected book name   
         self.lbl_name = Label(self.bottomFrame, text="Select Book:", font="arial 15 bold", fg='white', bg='#fcc324')
         self.lbl_name.place(x=40, y=42)
         self.combo_name = ttk.Combobox(self.bottomFrame)
@@ -38,7 +38,7 @@ class ReturnBook(Toplevel):
         borrowed_books = cur.execute(query).fetchall() # fetch all books that are borrowed
         book_list = []
         for book in borrowed_books:
-            book_list.append(str(book[0]) + "-" + book[1])
+            book_list.append(str(book[0]) + "-" + book[1]) # getting book ID and name
         self.combo_name['values'] = book_list # fill the combo box
 
         self.btn_return = Button(self.bottomFrame, text="Return Book", command=self.returnBook)
@@ -50,12 +50,10 @@ class ReturnBook(Toplevel):
             try:
                 cur.execute("UPDATE books SET book_status = 0 WHERE book_id = ?", (book_id,)) # update books to be available
                 con.commit()
-
                 cur.execute("DELETE FROM borrows WHERE bbook_id = ?", (book_id,)) # remove books from borrowed table
                 con.commit()
-
                 messagebox.showinfo("Success", "Book returned successfully!")
             except:
                 messagebox.showerror("Error", "Error returning book")
         else:
-            messagebox.showerror("Error", "Please select a book to return")         
+            messagebox.showerror("Error", "Please select a book to return")     # error if book ID name   
